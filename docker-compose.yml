@@ -15,9 +15,12 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
 
   scala:
-    image: "h3poteto/scala"
+    image: h3poteto/activator
     volumes:
       - .:/var/opt/app
+      - .ivy2:/home/scala/.ivy2
+      - .activator:/home/scala/.activator
+      - .sbt:/home/scala/.sbt
     links:
       - mysql:mysql
     command: /bin/bash

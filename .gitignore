@@ -6,4 +6,7 @@ target
 /.project
 /.settings
 /RUNNING_PID
+.ivy2/
+.activator/
+.sbt/
 .ensime

@@ -21,6 +21,8 @@ services:
       - .ivy2:/home/scala/.ivy2
       - .activator:/home/scala/.activator
       - .sbt:/home/scala/.sbt
+    ports:
+      - "9000:9000"
     links:
       - mysql:mysql
     command: /bin/bash

@@ -16,6 +16,7 @@ services:
 
   scala:
     image: h3poteto/activator
+    env_file: .docker-env
     volumes:
       - .:/var/opt/app
       - .ivy2:/home/scala/.ivy2

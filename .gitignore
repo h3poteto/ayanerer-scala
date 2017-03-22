@@ -10,3 +10,4 @@ target
 .activator/
 .sbt/
 .ensime
+.docker-env

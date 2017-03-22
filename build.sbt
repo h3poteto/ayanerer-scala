@@ -15,7 +15,9 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
-  "mysql" % "mysql-connector-java" % "5.1.41"
+  "mysql" % "mysql-connector-java" % "5.1.41",
+  "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+  "io.spray" %%  "spray-json" % "1.3.3"
 )
 
 def registerTask(name: String, taskClass: String, description: String) = {

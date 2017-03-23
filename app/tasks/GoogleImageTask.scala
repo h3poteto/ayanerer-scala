@@ -16,7 +16,11 @@ class GoogleImageTask extends Task {
   val app = loader.load(context)
 
   def run() {
-    getImages("佐倉綾音")
+    try {
+      getImages("佐倉綾音")
+    } finally {
+      Play.stop(app)
+    }
   }
 
   private def getImages(name: String) {

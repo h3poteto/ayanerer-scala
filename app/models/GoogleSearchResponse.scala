@@ -1,12 +1,12 @@
-package tasks
+package models
 
 import spray.json._
 import DefaultJsonProtocol._
 
-object GoogleSearchResponseProtocol extends DefaultJsonProtocol {
+object GoogleSearchResponseJsonProtocol extends DefaultJsonProtocol {
   implicit val googleSearchImageFormat = jsonFormat7(GoogleSearchImage.apply)
   implicit val googleSearchItemFormat = jsonFormat9(GoogleSearchItem.apply)
-  implicit val googleSearchResponseFormat = jsonFormat1(GoogleSearchResponse.apply)
+  implicit val googleSearchJsonResponseFormat = jsonFormat1(GoogleSearchResponse.apply)
 }
 
 case class GoogleSearchResponse(items: List[GoogleSearchItem])

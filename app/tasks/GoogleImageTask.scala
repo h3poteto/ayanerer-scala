@@ -3,10 +3,11 @@ package tasks
 import java.net.URL
 import dispatch._, Defaults._
 import spray.json._
-import GoogleSearchResponseProtocol._
+import play.api._
 import dao.AyaneruDAO
 import models.Ayaneru
-import play.api._
+import models.GoogleSearchResponseJsonProtocol._
+import models.{ GoogleSearchResponse, GoogleSearchItem, GoogleSearchImage }
 
 class GoogleImageTask extends Task {
   // TODO: Modeの入れ替え

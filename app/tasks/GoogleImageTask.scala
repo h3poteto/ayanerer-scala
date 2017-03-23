@@ -4,9 +4,18 @@ import java.net.URL
 import dispatch._, Defaults._
 import spray.json._
 import GoogleSearchResponseProtocol._
+import dao.AyaneruDAO
+import models.Ayaneru
+import play.api._
 
 class GoogleImageTask extends Task {
-  def run {
+  // TODO: Modeの入れ替え
+  val env = Environment(new java.io.File("."), this.getClass.getClassLoader, Mode.Dev)
+  val context = ApplicationLoader.createContext(env)
+  val loader = ApplicationLoader(context)
+  val app = loader.load(context)
+
+  def run() {
     getImages("佐倉綾音")
   }
 
@@ -17,12 +26,15 @@ class GoogleImageTask extends Task {
 
   private def saveImage(item: GoogleSearchItem) {
     val url = storeImage(item.link)
+    val app2dao = Application.instanceCache[AyaneruDAO]
+    val dao = app2dao(app)
+    val ayaneru = new Ayaneru(None, url)
+    dao.insert(ayaneru)
   }
 
   // urlに指定された画像を/tmpにダウンロードしs3にアップロードしてurlを返す
   private def storeImage(url: String): String = {
-    println(url)
-    ""
+    url
   }
 
   private def searchImages(name: String): GoogleSearchResponse = {

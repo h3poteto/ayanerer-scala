@@ -10,11 +10,7 @@ import models.GoogleSearchResponseJsonProtocol._
 import models.{ GoogleSearchResponse, GoogleSearchItem, GoogleSearchImage }
 
 class GoogleImageTask extends Task {
-  // TODO: Modeの入れ替え
-  val env = Environment(new java.io.File("."), this.getClass.getClassLoader, Mode.Dev)
-  val context = ApplicationLoader.createContext(env)
-  val loader = ApplicationLoader(context)
-  val app = loader.load(context)
+  val app = application()
 
   def run() {
     try {

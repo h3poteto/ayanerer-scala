@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
   "io.spray" %%  "spray-json" % "1.3.3",
   "com.typesafe.play" %% "play-slick" % "2.0.2",
-  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.2"
+  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.2",
+  "org.mockito" % "mockito-core" % "2.7.19" % Test
 )
 
 def registerTask(name: String, taskClass: String, description: String) = {

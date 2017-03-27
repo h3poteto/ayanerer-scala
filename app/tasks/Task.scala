@@ -3,7 +3,16 @@ package tasks
 import play.api._
 
 trait Task extends Runnable {
-  def run()
+  final def run() {
+    val app = application()
+    try {
+      task(app)
+    } finally {
+      Play.stop(app)
+    }
+  }
+
+  def task(app: Application)
 
   def environment(): Mode.Mode = {
     sys.env("PLAY_ENV") match {

@@ -19,4 +19,15 @@ class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
       }
     }
   }
+
+  "all" should {
+    "success" in {
+      val ayaneru = new Ayaneru(None, "sample")
+      whenReady(ayaneruDao.insert(ayaneru)) { _ =>
+        whenReady(ayaneruDao.all()) { result =>
+          result(0).image mustBe ayaneru.image
+        }
+      }
+    }
+  }
 }

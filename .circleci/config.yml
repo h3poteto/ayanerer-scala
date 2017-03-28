@@ -12,19 +12,28 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          name: Restoring cache - activator, ivy2, sbt
+          name: Restoring cache - activator
           keys:
             - activator-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - ivy2
+          keys:
             - ivy2-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - sbt
+          keys:
             - sbt-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - target
+          keys:
+            - target-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - project
+          keys:
+            - project-{{ checksum "build.sbt" }}
       - run:
           name: Install dependencies
           command: activator "help"
-      - save_cache:
-          name: Saving cache - activator
-          key: activator-{{ .Branch }}
-          paths:
-            - "~/.activator"
       - run:
           name: Create test database
           command: mysql -u root -h 127.0.0.1 -e 'create database ayanerer_test character set utf8mb4;'
@@ -32,13 +41,27 @@ jobs:
           name: Test
           command: activator "test"
       - save_cache:
+          name: Saving cache - activator
+          key: activator-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.activator"
+      - save_cache:
           name: Saving cache - ivy2
-          key: ivy2-{{ .Branch }}
+          key: ivy2-{{ checksum "build.sbt" }}
           paths:
             - "~/.ivy2"
       - save_cache:
           name: Saving cache - sbt
-          key: sbt-{{ .Branch }}
+          key: sbt-{{ checksum "build.sbt" }}
           paths:
             - "~/.sbt"
-
+      - save_cache:
+          name: Saving cache - target
+          key: target-{{ checksum "build.sbt" }}
+          paths:
+            - "target"
+      - save_cache:
+          name: Saving cache - project
+          key: project-{{ checksum "build.sbt" }}
+          paths:
+            - "project/target"

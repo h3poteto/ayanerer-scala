@@ -24,7 +24,6 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.7.19" % Test
 )
 
-
 def registerTask(name: String, taskClass: String, description: String) = {
   val sbtTask = (dependencyClasspath in Runtime) map { (deps) =>
     val depURLs = deps.map(_.data.toURI.toURL).toArray

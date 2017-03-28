@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: h3poteto/activator
+        environment:
+          DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
       - image: mysql:5.7
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -12,9 +14,9 @@ jobs:
       - restore_cache:
           name: Restoring cache - activator, ivy2, sbt
           keys:
-            - activator-{{ .Branch }}
-            - ivy2-{{ .Branch }}
-            - sbt-{{ .Branch }}
+            - activator-{{ checksum "build.sbt" }}
+            - ivy2-{{ checksum "build.sbt" }}
+            - sbt-{{ checksum "build.sbt" }}
       - run:
           name: Install dependencies
           command: activator "help"
@@ -24,7 +26,7 @@ jobs:
           paths:
             - "~/.activator"
       - run:
-          name: Create database
+          name: Create test database
           command: mysql -u root -h 127.0.0.1 -e 'create database ayanerer_test character set utf8mb4;'
       - run:
           name: Test

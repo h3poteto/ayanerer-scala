@@ -6,7 +6,8 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
   .settings(
-    registerTask("google-image-download", "tasks.GoogleImageTask", "image from google")
+    registerTask("google-image-download", "tasks.GoogleImageTask", "image from google"),
+    javaOptions in Test += "-Dconfig.file=conf/test.conf"
   )
 
 scalaVersion := "2.11.7"
@@ -22,6 +23,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.2",
   "org.mockito" % "mockito-core" % "2.7.19" % Test
 )
+
 
 def registerTask(name: String, taskClass: String, description: String) = {
   val sbtTask = (dependencyClasspath in Runtime) map { (deps) =>

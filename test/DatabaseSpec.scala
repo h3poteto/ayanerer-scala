@@ -13,17 +13,7 @@ import play.api.db.evolutions.Evolutions
 import scala.concurrent.Future
 
 trait DatabaseSpec extends PlaySpec with OneAppPerSuite with BeforeAndAfterEach {
-  val dbHost = sys.env.getOrElse("DB_HOST", "127.0.0.1")
-  implicit override lazy val app: Application = new GuiceApplicationBuilder().
-    configure(
-      "slick.dbs.default.driver" -> "slick.driver.MySQLDriver$",
-      "slick.dbs.default.db.driver" -> "com.mysql.jdbc.Driver",
-      "slick.dbs.default.db.url" -> s"jdbc:mysql://$dbHost/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false",
-      "slick.dbs.default.db.user" -> "root",
-      "slick.dbs.default.db.password" -> "",
-      "slick.dbs.default.db.numThreads" -> 10,
-      "slick.dbs.default.db.queueSize" -> 30
-    ).build
+  implicit override lazy val app: Application = new GuiceApplicationBuilder().build
 
   // Prepare and clean database
   // http://stackoverflow.com/questions/33392905/how-to-apply-manually-evolutions-in-tests-with-slick-and-play-2-4

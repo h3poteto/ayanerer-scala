@@ -19,7 +19,6 @@ services:
     env_file: .docker-env
     environment:
       PLAY_ENV: "development"
-      DB_HOST: "mysql"
     volumes:
       - .:/var/opt/app
       - .ivy2:/home/scala/.ivy2

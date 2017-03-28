@@ -12,11 +12,12 @@ import play.api.db.evolutions.Evolutions
 import scala.concurrent.Future
 
 trait DatabaseSpec extends PlaySpec with OneAppPerSuite with BeforeAndAfterEach {
+  val dbHost = sys.env.getOrElse("DB_HOST", "127.0.0.1")
   implicit override lazy val app = new GuiceApplicationBuilder().
     configure(
       "slick.dbs.default.driver" -> "slick.driver.MySQLDriver$",
       "slick.dbs.default.db.driver" -> "com.mysql.jdbc.Driver",
-      "slick.dbs.default.db.url" -> "jdbc:mysql://mysql/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false",
+      "slick.dbs.default.db.url" -> s"jdbc:mysql://$dbHost/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false",
       "slick.dbs.default.db.user" -> "root",
       "slick.dbs.default.db.password" -> "",
       "slick.dbs.default.db.numThreads" -> 10,

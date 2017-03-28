@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: h3poteto/activator
+      - image: mysql:5.7
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    working_directory: /var/opt/app
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restoring cache - activator, ivy2, sbt
+          keys:
+            - activator-{{ .Branch }}
+            - ivy2-{{ .Branch }}
+            - sbt-{{ .Branch }}
+      - run:
+          name: Install dependencies
+          command: activator "help"
+      - save_cache:
+          name: Saving cache - activator
+          key: activator-{{ .Branch }}
+          paths:
+            - "~/.activator"
+      - run:
+          name: Create database
+          command: mysql -u root -h 127.0.0.1 -e 'create database ayanerer_test character set utf8mb4;'
+      - run:
+          name: Test
+          command: activator "test"
+      - save_cache:
+          name: Saving cache - ivy2
+          key: ivy2-{{ .Branch }}
+          paths:
+            - "~/.ivy2"
+      - save_cache:
+          name: Saving cache - sbt
+          key: sbt-{{ .Branch }}
+          paths:
+            - "~/.sbt"
+

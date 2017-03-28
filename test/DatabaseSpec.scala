@@ -3,6 +3,7 @@ package com.h3poteto.ayanerer.test
 import javax.inject._
 import org.scalatestplus.play._
 import org.scalatest._
+import play.api._
 import play.api.test._
 import play.api.test.Helpers._
 import play.api.inject.guice._
@@ -13,7 +14,7 @@ import scala.concurrent.Future
 
 trait DatabaseSpec extends PlaySpec with OneAppPerSuite with BeforeAndAfterEach {
   val dbHost = sys.env.getOrElse("DB_HOST", "127.0.0.1")
-  implicit override lazy val app = new GuiceApplicationBuilder().
+  implicit override lazy val app: Application = new GuiceApplicationBuilder().
     configure(
       "slick.dbs.default.driver" -> "slick.driver.MySQLDriver$",
       "slick.dbs.default.db.driver" -> "com.mysql.jdbc.Driver",

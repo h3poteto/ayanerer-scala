@@ -1,0 +1,67 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: h3poteto/activator
+        environment:
+          DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
+      - image: mysql:5.7
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    working_directory: /var/opt/app
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restoring cache - activator
+          keys:
+            - activator-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - ivy2
+          keys:
+            - ivy2-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - sbt
+          keys:
+            - sbt-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - target
+          keys:
+            - target-{{ checksum "build.sbt" }}
+      - restore_cache:
+          name: Restoring cache - project
+          keys:
+            - project-{{ checksum "build.sbt" }}
+      - run:
+          name: Install dependencies
+          command: activator "help"
+      - run:
+          name: Create test database
+          command: mysql -u root -h 127.0.0.1 -e 'create database ayanerer_test character set utf8mb4;'
+      - run:
+          name: Test
+          command: activator "test"
+      - save_cache:
+          name: Saving cache - activator
+          key: activator-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.activator"
+      - save_cache:
+          name: Saving cache - ivy2
+          key: ivy2-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.ivy2"
+      - save_cache:
+          name: Saving cache - sbt
+          key: sbt-{{ checksum "build.sbt" }}
+          paths:
+            - "~/.sbt"
+      - save_cache:
+          name: Saving cache - target
+          key: target-{{ checksum "build.sbt" }}
+          paths:
+            - "target"
+      - save_cache:
+          name: Saving cache - project
+          key: project-{{ checksum "build.sbt" }}
+          paths:
+            - "project/target"

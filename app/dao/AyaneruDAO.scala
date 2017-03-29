@@ -13,9 +13,13 @@ class AyaneruDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   private val Ayanerus = TableQuery[AyanerusTable]
 
+  def findById(id: Int): Future[Option[Ayaneru]] = db.run(Ayanerus.filter(_.id === id).result.headOption)
+
   def all(): Future[Seq[Ayaneru]] = db.run(Ayanerus.result)
 
-  def insert(ayaneru: Ayaneru): Future[Unit] = db.run(Ayanerus += ayaneru).map { _ => () }
+  def insert(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus += ayaneru).map { id => id }
+
+  def update(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus.filter(_.id === ayaneru.id).update(ayaneru)).map { id => id }
 
   private class AyanerusTable(tag: Tag) extends Table[Ayaneru](tag, "ayanerus") {
     def id = column[Int]("id", O.PrimaryKey)

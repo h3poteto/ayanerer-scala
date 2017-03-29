@@ -1,0 +1,9 @@
+@(registrationForm: Form[Ayaneru])(implicit messages:Messages)
+@import helper._
+
+@layouts.main("New Ayaneru") {
+  @helper.form(action = routes.AyaneruController.create) {
+    @inputText(registrationForm("image"))
+    <input type="submit" value="登録">
+  }
+}

@@ -10,9 +10,12 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.i18n.{MessagesApi, Messages, I18nSupport}
 import dao.AyaneruDAO
 import models.Ayaneru
+import actors.ImageUploadActor
+import akka.actor._
+import scala.concurrent.duration._
 
 @Singleton
-class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: MessagesApi, system: ActorSystem) extends Controller with I18nSupport {
   val registrationForm = Form[Ayaneru](
     mapping(
       "id"    -> ignored[Option[Int]](None),
@@ -27,6 +30,8 @@ class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: Mess
   def create = Action.async { implicit request =>
     val ayaneru: Ayaneru = registrationForm.bindFromRequest.get
     ayaneruDao.insert(ayaneru).map { _ =>
+      val uploadActor = system.actorOf(Props[ImageUploadActor])
+      system.scheduler.scheduleOnce(1 seconds, uploadActor, "save")
       Redirect(routes.HomeController.index)
     }
   }

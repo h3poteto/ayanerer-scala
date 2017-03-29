@@ -25,7 +25,7 @@ class ApplicationSpec extends DatabaseSpec {
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include ("Your new application is ready.")
+      contentAsString(home) must include ("Ayanerer")
     }
 
   }

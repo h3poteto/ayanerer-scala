@@ -15,7 +15,7 @@ class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
     "success" in {
       val ayaneru = new Ayaneru(None, "sample")
       whenReady(ayaneruDao.insert(ayaneru)) { result =>
-        result mustBe((): Unit)
+        result mustBe 1
       }
     }
   }

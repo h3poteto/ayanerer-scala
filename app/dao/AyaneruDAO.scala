@@ -17,7 +17,7 @@ class AyaneruDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   def all(): Future[Seq[Ayaneru]] = db.run(Ayanerus.result)
 
-  def insert(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus += ayaneru).map { id => id }
+  def insert(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus += ayaneru)
 
   def update(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus.filter(_.id === ayaneru.id).update(ayaneru)).map { id => id }
 

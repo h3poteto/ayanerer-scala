@@ -30,6 +30,7 @@ class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: Mess
   def create = Action.async { implicit request =>
     val ayaneru: Ayaneru = registrationForm.bindFromRequest.get
     ayaneruDao.insert(ayaneru).map { id =>
+      // TODO: このidはauto incrementの値ではないので要修正
       val actor = system.actorOf(Props[ImageUploadActor])
       actor ! ImageUploadActor.Upload(id, ayaneruDao)
       Redirect(routes.HomeController.index)

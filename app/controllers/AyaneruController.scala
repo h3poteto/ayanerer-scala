@@ -12,10 +12,9 @@ import dao.AyaneruDAO
 import models.Ayaneru
 import actors.ImageUploadActor
 import akka.actor._
-import scala.concurrent.duration._
 
 @Singleton
-class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: MessagesApi, system: ActorSystem) extends Controller with I18nSupport {
+class AyaneruController @Inject() (val messagesApi: MessagesApi, system: ActorSystem) extends Controller with I18nSupport {
   val registrationForm = Form[Ayaneru](
     mapping(
       "id"    -> ignored[Option[Int]](None),
@@ -27,14 +26,12 @@ class AyaneruController @Inject() (ayaneruDao: AyaneruDAO, val messagesApi: Mess
     Ok(views.html.ayaneru.registration(registrationForm))
   }
 
-  def create = Action.async { implicit request =>
+  def create = Action { implicit request =>
     val ayaneru: Ayaneru = registrationForm.bindFromRequest.get
-    ayaneruDao.insert(ayaneru).map { id =>
-      // TODO: このidはauto incrementの値ではないので要修正
-      val actor = system.actorOf(Props[ImageUploadActor])
-      actor ! ImageUploadActor.Upload(id, ayaneruDao)
-      Redirect(routes.HomeController.index)
-    }
+    val id = AyaneruDAO.create(ayaneru)
+    val actor = system.actorOf(Props[ImageUploadActor])
+    actor ! ImageUploadActor.Upload(id.toInt, AyaneruDAO)
+    Redirect(routes.HomeController.index)
   }
 }
 

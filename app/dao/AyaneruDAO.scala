@@ -1,30 +1,29 @@
 package dao
 
-import scala.concurrent.Future
-import javax.inject.Inject
+import scalikejdbc._
+import skinny.orm._
+import org.joda.time._
 import models.Ayaneru
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import slick.driver.JdbcProfile
 
-class AyaneruDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
-  import driver.api._
+trait AyaneruBase {
+  def findById(id: Int): Option[Ayaneru]
+}
 
-  private val Ayanerus = TableQuery[AyanerusTable]
+object AyaneruDAO extends SkinnyCRUDMapper[Ayaneru] with AyaneruBase {
+  override lazy val defaultAlias = createAlias("a")
+  override lazy val tableName = "ayanerus"
+  private[this] lazy val a = defaultAlias
 
-  def findById(id: Int): Future[Option[Ayaneru]] = db.run(Ayanerus.filter(_.id === id).result.headOption)
+  override def extract(rs: WrappedResultSet, rn: ResultName[Ayaneru]): Ayaneru = Ayaneru(
+    id = Some(rs.int(rn.id)),
+    image = rs.string(rn.image)
+  )
 
-  def all(): Future[Seq[Ayaneru]] = db.run(Ayanerus.result)
+  def create(ayaneru: Ayaneru): Long = createWithNamedValues(
+    column.image -> ayaneru.image
+  )
 
-  def insert(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus += ayaneru)
+  def findById(id: Int): Option[Ayaneru] = where(sqls.eq(a.id, id)).apply().headOption
 
-  def update(ayaneru: Ayaneru): Future[Int] = db.run(Ayanerus.filter(_.id === ayaneru.id).update(ayaneru)).map { id => id }
-
-  private class AyanerusTable(tag: Tag) extends Table[Ayaneru](tag, "ayanerus") {
-    def id = column[Int]("id", O.PrimaryKey)
-    def image = column[String]("image")
-
-    def * = (id.?, image) <> (Ayaneru.tupled, Ayaneru.unapply _)
-  }
+  def all(): Seq[Ayaneru] = findAll()
 }

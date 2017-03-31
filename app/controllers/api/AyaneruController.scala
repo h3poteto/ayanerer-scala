@@ -11,11 +11,10 @@ import models.Ayaneru
 import models.AyaneruJsonProtocol._
 
 @Singleton
-class AyaneruController @Inject() (ayaneruDao: AyaneruDAO) extends Controller {
-  def index = Action.async {
-    ayaneruDao.all().map {
-      ayanerus => Ok(ayanerus.toJson.prettyPrint)
-    }
+class AyaneruController @Inject() () extends Controller {
+  def index = Action {
+    val ayanerus = AyaneruDAO.all()
+    Ok(ayanerus.toJson.prettyPrint)
   }
 }
 

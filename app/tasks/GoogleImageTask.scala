@@ -1,22 +1,16 @@
 package tasks
 
 import play.api._
-import dao.AyaneruDAO
 import models.{ GoogleSearchResultDownloader, GoogleSearchRequest }
 
 class GoogleImageTask extends Task {
-  def task(app: Application) {
-    getImages(dao(app), "佐倉綾音")
+  def task(app: Application) = {
+    getImages("佐倉綾音")
   }
 
-  def getImages(dao: AyaneruDAO, name: String) {
+  def getImages(name: String) = {
     val request = new GoogleSearchRequest(name)
-    val downloader = new GoogleSearchResultDownloader(dao, request)
+    val downloader = new GoogleSearchResultDownloader(request)
     downloader.download()
-  }
-
-  private def dao(app: Application): AyaneruDAO = {
-    val app2dao = Application.instanceCache[AyaneruDAO]
-    app2dao(app)
   }
 }

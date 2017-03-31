@@ -9,25 +9,20 @@ import models.Ayaneru
 import dao.AyaneruDAO
 
 class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
-  def ayaneruDao(implicit app: Application): AyaneruDAO = Application.instanceCache[AyaneruDAO].apply(app)
 
   "insert" should {
     "success" in {
       val ayaneru = new Ayaneru(None, "sample")
-      whenReady(ayaneruDao.insert(ayaneru)) { result =>
-        result mustBe 1
-      }
+      val result = AyaneruDAO.create(ayaneru)
+      result mustBe(_: Long)
     }
   }
 
   "all" should {
     "success" in {
       val ayaneru = new Ayaneru(None, "sample")
-      whenReady(ayaneruDao.insert(ayaneru)) { _ =>
-        whenReady(ayaneruDao.all()) { result =>
-          result(0).image mustBe ayaneru.image
-        }
-      }
+      AyaneruDAO.create(ayaneru)
+      AyaneruDAO.all()(0).image mustBe ayaneru.image
     }
   }
 }

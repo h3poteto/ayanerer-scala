@@ -7,7 +7,7 @@ import dao.AyaneruDAO
 import models.GoogleSearchResponseJsonProtocol._
 
 class GoogleSearchResultDownloader @Inject()(val dao: AyaneruDAO, val request: GoogleSearchRequest) {
-  def download() {
+  def download() = {
     search().items.map { item =>
       saveImage(item)
     }
@@ -17,7 +17,7 @@ class GoogleSearchResultDownloader @Inject()(val dao: AyaneruDAO, val request: G
     request.request().apply().parseJson.convertTo[GoogleSearchResponse]
   }
 
-  def saveImage(item: GoogleSearchItem) {
+  def saveImage(item: GoogleSearchItem) = {
     val ayaneru = new Ayaneru(None, item.link)
     dao.insert(ayaneru)
   }

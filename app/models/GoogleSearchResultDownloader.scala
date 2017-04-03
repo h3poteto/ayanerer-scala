@@ -3,10 +3,10 @@ package models
 import spray.json._
 import dispatch._, Defaults._
 import javax.inject.Inject
-import dao.AyaneruDAO
+import dao.AyaneruDAOImpl
 import models.GoogleSearchResponseJsonProtocol._
 
-class GoogleSearchResultDownloader @Inject()(val dao: AyaneruDAO, val request: GoogleSearchRequest) {
+class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest) {
   def download() = {
     search().items.map { item =>
       saveImage(item)
@@ -19,7 +19,8 @@ class GoogleSearchResultDownloader @Inject()(val dao: AyaneruDAO, val request: G
 
   def saveImage(item: GoogleSearchItem) = {
     val ayaneru = new Ayaneru(None, item.link)
-    dao.insert(ayaneru)
+    val dao = new AyaneruDAOImpl
+    dao.create(ayaneru)
   }
 }
 

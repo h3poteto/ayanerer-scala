@@ -19,9 +19,7 @@ class AyaneruControllerSpec extends PlaySpec with OneAppPerTest  with ScalaFutur
     "Empty object" should {
       // http://www.innovaedge.com/2015/07/01/how-to-use-mocks-in-injected-objects-with-guiceplayscala/
       val ayaneruDaoMock = mock[AyaneruDAO]
-      val ayanerus: Seq[Future[Ayaneru]] = Seq.empty[Future[Ayaneru]]
-      val emptyVector: Future[Seq[Ayaneru]] = Future.sequence(ayanerus)
-      when(ayaneruDaoMock.all()).thenReturn(emptyVector)
+      when(ayaneruDaoMock.all()).thenReturn(Seq.empty[Ayaneru])
 
       val mockApp = new GuiceApplicationBuilder().
         overrides(bind[AyaneruDAO].toInstance(ayaneruDaoMock)).
@@ -37,11 +35,7 @@ class AyaneruControllerSpec extends PlaySpec with OneAppPerTest  with ScalaFutur
 
     "Some object" should {
       val ayaneruDaoMock = mock[AyaneruDAO]
-      val ayanerus: Seq[Future[Ayaneru]] = Seq(Future {
-        new Ayaneru(Some(1), "sample")
-      })
-      val ayaneruVector: Future[Seq[Ayaneru]] = Future.sequence(ayanerus)
-      when(ayaneruDaoMock.all()).thenReturn(ayaneruVector)
+      when(ayaneruDaoMock.all()).thenReturn(Seq(new Ayaneru(Some(1), "sample")))
 
       val mockApp = new GuiceApplicationBuilder().
         overrides(bind[AyaneruDAO].toInstance(ayaneruDaoMock)).

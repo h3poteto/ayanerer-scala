@@ -25,17 +25,16 @@ class ImageUploadActor extends Actor {
       execute(id, dao)
   }
 
-  def execute(id: Int, dao: AyaneruDAO):Future[Boolean] = {
-    dao.findById(id).map { ayaneru =>
-      Logger.info(ayaneru.toJson.prettyPrint)
-      ayaneru match {
-        case Some(Ayaneru(_,_)) => {
-          val aya = ayaneru.get
-          println(download(aya.image))
-          true
-        }
-        case None => false
+  def execute(id: Int, dao: AyaneruDAO):Boolean = {
+    val ayaneru = dao.findById(id)
+    Logger.info(ayaneru.toJson.prettyPrint)
+    ayaneru match {
+      case Some(Ayaneru(_,_)) => {
+        val aya = ayaneru.get
+        println(download(aya.image))
+        true
       }
+      case None => false
     }
   }
 

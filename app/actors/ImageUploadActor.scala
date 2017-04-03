@@ -2,7 +2,7 @@ package actors
 
 import play.api.Logger
 import akka.actor._
-import dao.AyaneruDAOBase
+import dao.AyaneruDAO
 import spray.json._
 import models.AyaneruJsonProtocol._
 import models.Ayaneru
@@ -14,7 +14,7 @@ import java.security.MessageDigest
 import scala.concurrent.Future
 
 object ImageUploadActor {
-  case class Upload(id: Int, dao: AyaneruDAOBase)
+  case class Upload(id: Int, dao: AyaneruDAO)
 }
 
 class ImageUploadActor extends Actor {
@@ -25,7 +25,7 @@ class ImageUploadActor extends Actor {
       execute(id, dao)
   }
 
-  def execute(id: Int, dao: AyaneruDAOBase):Boolean = {
+  def execute(id: Int, dao: AyaneruDAO):Boolean = {
     val ayaneru = dao.findById(id)
     Logger.info(ayaneru.toJson.prettyPrint)
     ayaneru match {

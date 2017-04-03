@@ -10,8 +10,6 @@ import play.api.inject.guice._
 import play.api.db.{ Database, DBApi}
 import play.api.db.evolutions.Evolutions
 
-import scala.concurrent.Future
-
 trait DatabaseSpec extends PlaySpec with OneAppPerSuite with BeforeAndAfterEach {
   implicit override lazy val app: Application = new GuiceApplicationBuilder().build
 

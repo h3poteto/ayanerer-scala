@@ -9,11 +9,12 @@ import models.Ayaneru
 import dao.AyaneruDAO
 
 class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
+  def ayaneruDao(implicit app: Application): AyaneruDAO = Application.instanceCache[AyaneruDAO].apply(app)
 
   "insert" should {
     "success" in {
       val ayaneru = new Ayaneru(None, "sample")
-      val result = AyaneruDAO.create(ayaneru)
+      val result = ayaneruDao.create(ayaneru)
       result mustBe(_: Long)
     }
   }
@@ -21,8 +22,8 @@ class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
   "all" should {
     "success" in {
       val ayaneru = new Ayaneru(None, "sample")
-      AyaneruDAO.create(ayaneru)
-      AyaneruDAO.all()(0).image mustBe ayaneru.image
+      ayaneruDao.create(ayaneru)
+      ayaneruDao.all()(0).image mustBe ayaneru.image
     }
   }
 }

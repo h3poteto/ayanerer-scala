@@ -5,13 +5,13 @@ import skinny.orm._
 import org.joda.time._
 import models.Ayaneru
 
-trait AyaneruDAOBase {
+trait AyaneruDAO {
   def create(ayaneru: Ayaneru): Long
   def findById(id: Int): Option[Ayaneru]
   def all(): Seq[Ayaneru]
 }
 
-object AyaneruDAO extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAOBase {
+class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
   override lazy val defaultAlias = createAlias("a")
   override lazy val tableName = "ayanerus"
   private[this] lazy val a = defaultAlias

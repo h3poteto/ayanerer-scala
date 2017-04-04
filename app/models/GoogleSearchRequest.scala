@@ -1,6 +1,5 @@
 package models
 
-import java.net.URL
 import dispatch._, Defaults._
 import javax.inject.Inject
 

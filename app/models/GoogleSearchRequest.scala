@@ -26,9 +26,9 @@ trait GoogleSearchRequest {
   }
 }
 
-class SeedSearchRequest @Inject()(val name: String, val limit: Int) extends GoogleSearchRequest {
+class SeedSearchRequest @Inject()(val name: String, val limit: Int, val offset: Int) extends GoogleSearchRequest {
   def googleSearchRequest: String = {
-    s"https://www.googleapis.com/customsearch/v1?key=$googleApiKey&cx=$googleCustomSearchId&searchType=image&q=" + keyword(name) + "&num=" + limit.toString()
+    s"https://www.googleapis.com/customsearch/v1?key=$googleApiKey&cx=$googleCustomSearchId&searchType=image&q=" + keyword(name) + "&num=" + limit.toString() + s"&start=$offset"
   }
 }
 

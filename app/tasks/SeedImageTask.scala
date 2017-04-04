@@ -9,12 +9,15 @@ class SeedImageTask extends Task {
     getImages(app, "佐倉綾音")
   }
 
-  // TODO: limit: 10までしか指定できないため繰り返ししないといけない
   def getImages(app: Application, name: String) = {
-    val request = new SeedSearchRequest(name, 10)
-    val injector = app.injector
-    val actorSystem = injector.instanceOf[ActorSystem]
-    val downloader = new GoogleSearchResultDownloader(request, actorSystem)
-    downloader.download()
+    // limit: 10までしか受け付けてくれないので繰り返しをやるしかない
+    val limit = 10
+    for(offset <- (0 to 9).toList.map { i => i * limit + 1 }) {
+      val request = new SeedSearchRequest(name, limit, offset)
+      val injector = app.injector
+      val actorSystem = injector.instanceOf[ActorSystem]
+      val downloader = new GoogleSearchResultDownloader(request, actorSystem)
+      downloader.download()
+    }
   }
 }

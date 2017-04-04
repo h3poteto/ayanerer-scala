@@ -15,22 +15,27 @@ jobs:
           name: Restoring cache - activator
           keys:
             - activator-{{ checksum "build.sbt" }}
+            - activator-
       - restore_cache:
           name: Restoring cache - ivy2
           keys:
             - ivy2-{{ checksum "build.sbt" }}
+            - ivy2-
       - restore_cache:
           name: Restoring cache - sbt
           keys:
             - sbt-{{ checksum "build.sbt" }}
+            - sbt-
       - restore_cache:
           name: Restoring cache - target
           keys:
             - target-{{ checksum "build.sbt" }}
+            - target-
       - restore_cache:
           name: Restoring cache - project
           keys:
             - project-{{ checksum "build.sbt" }}
+            - project-
       - run:
           name: Install dependencies
           command: activator "help"

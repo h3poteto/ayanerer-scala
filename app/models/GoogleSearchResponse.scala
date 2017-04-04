@@ -1,7 +1,6 @@
 package models
 
 import spray.json._
-import DefaultJsonProtocol._
 
 object GoogleSearchResponseJsonProtocol extends DefaultJsonProtocol {
   implicit val googleSearchImageFormat = jsonFormat7(GoogleSearchImage.apply)
@@ -9,7 +8,7 @@ object GoogleSearchResponseJsonProtocol extends DefaultJsonProtocol {
   implicit val googleSearchJsonResponseFormat = jsonFormat1(GoogleSearchResponse.apply)
 }
 
-case class GoogleSearchResponse(items: List[GoogleSearchItem])
+case class GoogleSearchResponse(items: Option[List[GoogleSearchItem]])
 
 case class GoogleSearchItem(kind: String, title: String, htmlTitle: String, link: String, displayLink: String, snippet: String, htmlSnippet: String, mime: String, image: GoogleSearchImage)
 

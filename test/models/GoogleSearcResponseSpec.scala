@@ -80,8 +80,8 @@ class GoogleSearchResponseSpec extends PlaySpec {
 }
 """
       val items = jsonResponse.parseJson.convertTo[GoogleSearchResponse].items
-      items.length mustBe 1
-      items.map { item =>
+      items.get.length mustBe 1
+      items.get.map { item =>
         item.image.isInstanceOf[GoogleSearchImage]
       }
     }

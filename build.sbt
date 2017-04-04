@@ -6,7 +6,8 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
   .settings(
-    registerTask("google-image-download", "tasks.GoogleImageTask", "image from google"),
+    registerTask("seed-image-download", "tasks.SeedImageTask", "image from google"),
+    registerTask("daily-image-download", "tasks.DailyImageTask", "image from google"),
     javaOptions in Test += "-Dconfig.file=conf/test.conf"
   )
 

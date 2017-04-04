@@ -6,12 +6,10 @@ import dao.AyaneruDAO
 import spray.json._
 import models.AyaneruJsonProtocol._
 import models.Ayaneru
-import scala.concurrent.ExecutionContext.Implicits.global
-import sys.process._
-import java.net.URL
 import java.io.File
 import java.security.MessageDigest
-import scala.concurrent.Future
+import dispatch._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object ImageUploadActor {
   case class Upload(id: Int, dao: AyaneruDAO)
@@ -38,9 +36,12 @@ class ImageUploadActor extends Actor {
     }
   }
 
+  // http://stackoverflow.com/questions/5564074/scala-http-operations
+  // Headerを付けないと403を返す画像が混ざっている
   def download(url: String): String = {
     val fileName: String = "/tmp/" + sha1(url) + "." + extension(url)
-    new URL(url) #> new File(fileName) !!
+    val request = dispatch.url(url)
+    dispatch.Http(request <:< Map("User-Agent" -> "Mozilla/5.0") > dispatch.as.File(new File(fileName)))
 
     fileName
   }

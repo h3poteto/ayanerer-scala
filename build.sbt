@@ -8,6 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
   .settings(
     registerTask("seed-image-download", "tasks.SeedImageTask", "image from google"),
     registerTask("daily-image-download", "tasks.DailyImageTask", "image from google"),
+    registerTask("loop", "tasks.LoopTask", "loop"),
     javaOptions in Test += "-Dconfig.file=conf/test.conf"
   )
 

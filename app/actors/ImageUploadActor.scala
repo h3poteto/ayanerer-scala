@@ -5,11 +5,7 @@ import akka.actor._
 import dao.AyaneruDAO
 import spray.json._
 import models.AyaneruJsonProtocol._
-import models.Ayaneru
-import java.io.File
-import java.security.MessageDigest
-import dispatch._
-import scala.concurrent.ExecutionContext.Implicits.global
+import models.{Ayaneru, ImageUploader}
 
 object ImageUploadActor {
   case class Upload(id: Int, dao: AyaneruDAO)
@@ -29,36 +25,11 @@ class ImageUploadActor extends Actor {
     ayaneru match {
       case Some(Ayaneru(_,_)) => {
         val aya = ayaneru.get
-        println(download(aya.image))
+        val uploader = new ImageUploader(aya.image)
+        println(uploader.download())
         true
       }
       case None => false
-    }
-  }
-
-  // http://stackoverflow.com/questions/5564074/scala-http-operations
-  // Headerを付けないと403を返す画像が混ざっている
-  def download(url: String): String = {
-    val fileName: String = "/tmp/" + sha1(url) + "." + extension(url)
-    val request = dispatch.url(url)
-    dispatch.Http(request <:< Map("User-Agent" -> "Mozilla/5.0") > dispatch.as.File(new File(fileName)))
-
-    fileName
-  }
-
-  def sha1(str: String): String = {
-    val md = MessageDigest.getInstance("SHA-1")
-    md.update(str.getBytes)
-    md.digest.foldLeft("") { (s, b) => s + "%02x".format(if(b < 0) b + 256 else b) }
-  }
-
-  def extension(url: String): String = {
-    val pattern = "(.*)(?:\\.([^.]+$))".r
-    url match {
-      case pattern(k, v) => {
-        v
-      }
-      case _ => ""
     }
   }
 }

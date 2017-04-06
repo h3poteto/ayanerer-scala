@@ -16,8 +16,13 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
       case Some(List(_*)) => {
         items.get.map { item =>
           val id = saveImage(item)
-          val actor = system.actorOf(Props[ImageUploadActor])
-          actor ! ImageUploadActor.Upload(id.toInt, new AyaneruDAOImpl)
+          id match {
+            case Some(id) => {
+              val actor = system.actorOf(Props[ImageUploadActor])
+              actor ! ImageUploadActor.Upload(id.toInt, new AyaneruDAOImpl)
+            }
+            case None => {}
+          }
         }
       }
       case None => ()
@@ -30,7 +35,7 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
     result.parseJson.convertTo[GoogleSearchResponse]
   }
 
-  def saveImage(item: GoogleSearchItem): Long = {
+  def saveImage(item: GoogleSearchItem): Option[Long] = {
     val ayaneru = new Ayaneru(None, item.link)
     val dao = new AyaneruDAOImpl
     dao.create(ayaneru)

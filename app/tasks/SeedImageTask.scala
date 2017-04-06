@@ -12,7 +12,7 @@ class SeedImageTask extends Task {
   def getImages(app: Application, name: String) = {
     // limit: 10までしか受け付けてくれないので繰り返しをやるしかない
     val limit = 10
-    for(offset <- (0 to 1).toList.map { i => i * limit + 1 }) {
+    for(offset <- (0 to 9).toList.map { i => i * limit + 1 }) {
       val request = new SeedSearchRequest(name, limit, offset)
       val injector = app.injector
       val actorSystem = injector.instanceOf[ActorSystem]

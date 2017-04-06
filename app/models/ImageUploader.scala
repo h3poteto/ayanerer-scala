@@ -9,9 +9,9 @@ class ImageUploader(val url: String) {
   // http://stackoverflow.com/questions/5564074/scala-http-operations
   // Headerを付けないと403を返す画像が混ざっている
   def download(): Option[String] = {
-    extension(url) match {
+    extension match {
       case Some(ext) => {
-        val fileName: String = "/tmp/" + sha1(url) + "." + ext
+        val fileName: String = s"/tmp/$sha1.$ext"
         val request = dispatch.url(url)
         dispatch.Http(request <:< Map("User-Agent" -> "Mozilla/5.0") > dispatch.as.File(new File(fileName)))
 
@@ -21,13 +21,13 @@ class ImageUploader(val url: String) {
     }
   }
 
-  def sha1(str: String): String = {
+  def sha1: String = {
     val md = MessageDigest.getInstance("SHA-1")
-    md.update(str.getBytes)
+    md.update(url.getBytes)
     md.digest.foldLeft("") { (s, b) => s + "%02x".format(if(b < 0) b + 256 else b) }
   }
 
-  def extension(url: String): Option[String] = {
+  def extension: Option[String] = {
     val pattern = "(.*)(?:\\.([^.]+$))".r
     url match {
       case pattern(k, v) if image(v) => {

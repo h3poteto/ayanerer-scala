@@ -28,8 +28,14 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, system: ActorSy
   def create = Action { implicit request =>
     val ayaneru: Ayaneru = registrationForm.bindFromRequest.get
     val id = ayaneruDao.create(ayaneru)
-    val actor = system.actorOf(Props[ImageUploadActor])
-    actor ! ImageUploadActor.Upload(id.toInt, ayaneruDao)
+    id match {
+      case Some(id) => {
+        val actor = system.actorOf(Props[ImageUploadActor])
+        actor ! ImageUploadActor.Upload(id.toInt, ayaneruDao)
+      }
+      case None => {
+      }
+    }
     Redirect(routes.HomeController.index)
   }
 }

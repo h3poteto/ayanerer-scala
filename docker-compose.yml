@@ -15,7 +15,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
 
   scala:
-    image: h3poteto/activator
+    image: h3poteto/play
     env_file: .docker-env
     environment:
       PLAY_ENV: "development"

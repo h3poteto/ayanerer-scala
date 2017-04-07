@@ -1,0 +1,41 @@
+{
+  "name": "ayanerer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "node-sass": "^4.5.2",
+    "sass-loader": "^6.0.3",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.3.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.24.0"
+  },
+  "scripts": {
+    "compile": "webpack -p --display-error-details",
+    "watch": "webpack -w -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h3poteto/ayanerer-scala.git"
+  },
+  "author": "h3poteto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/h3poteto/ayanerer-scala/issues"
+  },
+  "homepage": "https://github.com/h3poteto/ayanerer-scala"
+}

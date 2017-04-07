@@ -1,5 +1,7 @@
 logs
 target
+public
+node_modules
 /.idea
 /.idea_modules
 /.classpath

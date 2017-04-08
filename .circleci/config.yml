@@ -96,7 +96,7 @@ jobs:
 
   deploy:
     docker:
-      - image: h3poteto/activator
+      - image: h3poteto/play
         user: root
     working_directory: /var/opt/app
     branches:

@@ -1,4 +1,6 @@
-h1 {
-  color: #0000ff;
-}
-
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+@import "~bootswatch/paper/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "~bootswatch/paper/bootswatch";
+@import "common";
+@import "home";

@@ -1,16 +1,19 @@
-#container {
-  .top-background {
-    background: url("/assets/images/main_background.jpeg");
-    background-size: cover;
-    color: #fff;
-    height: 35rem;
+body[data-controller="Home"][data-action="index"] {
+  #container {
+    .top-background {
+      background: url("/assets/images/main_background.jpeg");
+      background-size: cover;
+      color: #fff;
+      height: 35rem;
 
-    .main-title {
-      padding-top: 11.25rem;
-      max-width: 61.375rem;
-      width: 90%;
-      margin: 0 auto;
-      text-align: right;
+      .main-title {
+        padding-top: 11.25rem;
+        max-width: 61.375rem;
+        width: 90%;
+        margin: 0 auto;
+        text-align: right;
+      }
     }
   }
 }
+

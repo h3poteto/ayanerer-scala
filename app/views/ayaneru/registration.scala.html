@@ -1,9 +1,15 @@
 @(registrationForm: Form[Ayaneru])(implicit messages:Messages)
 @import helper._
+@import b3.vertical.fieldConstructor
 
-@layouts.main("New Ayaneru") {
-  @helper.form(action = routes.AyaneruController.create) {
-    @inputText(registrationForm("image"))
-    <input type="submit" value="登録">
-  }
+@layouts.main(title = "New Ayaneru", controller = "Ayaneru", action = "registration") {
+  <div id="container">
+    <div class="form-wrapper">
+      <h2>新規登録</h2>
+      @b3.form(action = routes.AyaneruController.create) {
+        @b3.text(registrationForm("image"), '_label -> "Image URL")
+        @b3.submit('class -> "btn btn-primary"){ 登録 }
+      }
+    </div>
+  </div>
 }

@@ -1,0 +1,15 @@
+body[data-controller="Ayaneru"] {
+  #container {
+    max-width: 61.375rem;
+    width: 80%;
+    margin: 0 auto;
+
+    .form-wrapper {
+      margin-top: 4.8rem;
+
+      form {
+        margin-top: 3.6rem;
+      }
+    }
+  }
+}

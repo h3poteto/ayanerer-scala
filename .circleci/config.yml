@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: h3poteto/activator
+      - image: h3poteto/play
         environment:
           DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
       - image: mysql:5.7
@@ -36,6 +36,19 @@ jobs:
           keys:
             - project-{{ checksum "build.sbt" }}
             - project-
+      - restore_cache:
+          name: Restoring cache - node_modules
+          keys:
+            - node_modules-{{ checksum "package.json" }}
+            - node_modules-
+      - run:
+          name: Node packages install
+          command: npm install
+      - save_cache:
+          name: Saving cache - node_modules
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - "node_modules"
       - run:
           name: Install dependencies
           command: activator "help"
@@ -127,6 +140,19 @@ jobs:
           keys:
             - project-{{ checksum "build.sbt" }}
             - project-
+      - restore_cache:
+          name: Restoring cache - node_modules
+          keys:
+            - node_modules-{{ checksum "package.json" }}
+            - node_modules-
+      - run:
+          name: Node packages install
+          command: npm install
+      - save_cache:
+          name: Saving cache - node_modules
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - "node_modules"
       - run:
           name: Build release package
           command: activator "dist"

@@ -22,8 +22,8 @@ services:
     stop_grace_period: 10s
   nginx:
     image: nginx:1.11-alpine
-    links:
-      - scala:scala
+    depends_on:
+      - scala
     ports:
       - "80:80"
       - "443:443"

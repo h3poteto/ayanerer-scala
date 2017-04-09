@@ -2,6 +2,7 @@ app/*
 bin/*
 libexec/*
 logs/*
+production/*
 project/*
 public/*
 test/*

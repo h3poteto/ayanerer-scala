@@ -4,7 +4,7 @@ import play.api._
 import models.{ GoogleSearchResultDownloader, SeedSearchRequest }
 import akka.actor._
 
-class SeedImageTask extends Task {
+object SeedImageTask extends Task {
   def task(app: Application) = {
     getImages(app, "佐倉綾音")
   }

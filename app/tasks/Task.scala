@@ -3,6 +3,8 @@ package tasks
 import play.api._
 
 trait Task extends Runnable {
+  run()
+
   final def run() {
     val app = application()
     try {

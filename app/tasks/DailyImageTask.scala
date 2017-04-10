@@ -4,7 +4,7 @@ import play.api._
 import models.{ GoogleSearchResultDownloader, DailySearchRequest }
 import akka.actor._
 
-class DailyImageTask extends Task {
+object DailyImageTask extends App with Task {
   def task(app: Application) = {
     getImages(app, "佐倉綾音")
   }

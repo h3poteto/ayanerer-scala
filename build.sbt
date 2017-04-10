@@ -6,8 +6,6 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
   .settings(
-    registerTask("seed-image-download", "tasks.SeedImageTask", "image from google"),
-    registerTask("daily-image-download", "tasks.DailyImageTask", "image from google"),
     javaOptions in Test += "-Dconfig.file=conf/test.conf"
   )
 
@@ -29,18 +27,3 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
-
-
-def registerTask(name: String, taskClass: String, description: String) = {
-  val sbtTask = (dependencyClasspath in Runtime) map { (deps) =>
-    val depURLs = deps.map(_.data.toURI.toURL).toArray
-    val classLoader = new URLClassLoader(depURLs, null)
-    val task = classLoader.
-                 loadClass(taskClass).
-                 newInstance().
-                 asInstanceOf[Runnable]
-    task.run()
-  }
-  TaskKey[Unit](name, description) <<= sbtTask.dependsOn(compile in Compile)
-}
-

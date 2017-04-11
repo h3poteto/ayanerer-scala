@@ -5,6 +5,9 @@ jobs:
       - image: h3poteto/play
         environment:
           DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
+          # MySQLの起動チェック用
+          HEALTH_CHECK_RETRY_LIMIT: 10
+          HEALTH_CHECK_RETRY_WAIT: 3
       - image: mysql:5.7
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -52,6 +55,13 @@ jobs:
       - run:
           name: Install dependencies
           command: activator "help"
+      - run:
+          name: Checking mysql connection
+          command: |
+            for i in $(seq $HEALTH_CHECK_RETRY_LIMIT)
+            do
+              mysql -u root -h 127.0.0.1 -e 'show databases' || (sleep $HEALTH_CHECK_RETRY_WAIT; false) && break
+            done
       - run:
           name: Create test database
           command: mysql -u root -h 127.0.0.1 -e 'create database ayanerer_test character set utf8mb4;'

@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: h3poteto/play
         environment:
-          DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
+          TEST_DB_URL: "jdbc:mysql://127.0.0.1/ayanerer_test?characterEncoding=UTF8&connectionCollation=utf8mb4_general_ci&useSSL=false"
           # MySQLの起動チェック用
           HEALTH_CHECK_RETRY_LIMIT: 10
           HEALTH_CHECK_RETRY_WAIT: 3

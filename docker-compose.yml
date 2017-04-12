@@ -14,22 +14,6 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
 
-  scala:
-    image: h3poteto/play
-    env_file: .docker-env
-    environment:
-      PLAY_ENV: "development"
-    volumes:
-      - .:/var/opt/app
-      - .ivy2:/home/scala/.ivy2
-      - .activator:/home/scala/.activator
-      - .sbt:/home/scala/.sbt
-    ports:
-      - "9000:9000"
-    links:
-      - mysql:mysql
-      - node:node
-    command: /bin/bash
   node:
     image: node:6.10-alpine
     user: node

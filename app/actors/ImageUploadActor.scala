@@ -2,6 +2,7 @@ package actors
 
 import play.api.Logger
 import akka.actor._
+import akka.persistence._
 import dao.AyaneruDAO
 import spray.json._
 import models.AyaneruJsonProtocol._
@@ -11,16 +12,26 @@ object ImageUploadActor {
   case class Upload(id: Int, dao: AyaneruDAO)
 }
 
-class ImageUploadActor extends Actor {
+class ImageUploadActor extends PersistentActor with AtLeastOnceDelivery {
   import ImageUploadActor._
+  override def persistenceId = "image-upload-actor"
 
-  def receive = {
-    case Upload(id, dao) =>
-      execute(id, dao)
+  def receiveRecover: Receive = {
+    case u: Upload => {
+      Logger.debug(s"recoverd upload: ${u.id}")
+      execute(u)
+    }
+    case SnapshotOffer(_, snapshot: Int) => ()
   }
 
-  def execute(id: Int, dao: AyaneruDAO):Boolean = {
-    val ayaneru = dao.findById(id)
+  def receiveCommand: Receive = {
+    case u: Upload => persist(u) { x =>
+      execute(u)
+    }
+  }
+
+  def execute(upload: Upload):Boolean = {
+    val ayaneru = upload.dao.findById(upload.id)
     Logger.info(ayaneru.toJson.prettyPrint)
     ayaneru match {
       case Some(Ayaneru(_,_)) => {

@@ -23,7 +23,10 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.7.19" % Test,
   "org.scalikejdbc"      %% "scalikejdbc-play-initializer"   % "2.5.+",
   "org.skinny-framework" %% "skinny-orm"                % "2.3.+",
-  "com.adrianhurt" %% "play-bootstrap" % "1.1.1-P25-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars"))
+  "com.adrianhurt" %% "play-bootstrap" % "1.1.1-P25-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars")),
+  "com.typesafe.akka" %% "akka-persistence" % "2.4.17",
+  "org.iq80.leveldb"  % "leveldb"          % "0.7",
+  "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
 )
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"

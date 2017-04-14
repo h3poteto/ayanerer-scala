@@ -9,6 +9,7 @@ import models.AyaneruJsonProtocol._
 import models.{Ayaneru, ImageUploader}
 
 object ImageUploadActor {
+  // DAOをもらってしまうとpersistできないのでやめたい
   case class Upload(id: Int, dao: AyaneruDAO)
 }
 
@@ -25,8 +26,9 @@ class ImageUploadActor extends PersistentActor with AtLeastOnceDelivery {
   }
 
   def receiveCommand: Receive = {
-    case u: Upload => persist(u) { x =>
+    case u: Upload => {
       execute(u)
+      sender ! "uploaded"
     }
   }
 
@@ -37,7 +39,7 @@ class ImageUploadActor extends PersistentActor with AtLeastOnceDelivery {
       case Some(Ayaneru(_,_)) => {
         val aya = ayaneru.get
         val uploader = new ImageUploader(aya.image)
-        println(uploader.download())
+        println(uploader.upload())
         true
       }
       case None => false

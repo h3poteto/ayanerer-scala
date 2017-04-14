@@ -4,7 +4,7 @@ import play.api._
 import models.{ GoogleSearchResultDownloader, SeedSearchRequest }
 import akka.actor._
 
-object SeedImageTask extends Task {
+object SeedImageTask extends App with Task {
   def task(app: Application) = {
     getImages(app, "佐倉綾音")
   }
@@ -12,7 +12,7 @@ object SeedImageTask extends Task {
   def getImages(app: Application, name: String) = {
     // limit: 10までしか受け付けてくれないので繰り返しをやるしかない
     val limit = 10
-    for(offset <- (0 to 9).toList.map { i => i * limit + 1 }) {
+    for(offset <- (0 to 0).toList.map { i => i * limit + 1 }) {
       val request = new SeedSearchRequest(name, limit, offset)
       val injector = app.injector
       val actorSystem = injector.instanceOf[ActorSystem]

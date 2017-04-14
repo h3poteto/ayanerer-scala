@@ -7,6 +7,11 @@ import dao.AyaneruDAOImpl
 import models.GoogleSearchResponseJsonProtocol._
 import actors.ImageUploadActor
 import akka.actor._
+import akka.pattern.ask
+import akka.util.Timeout
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.util.{Success, Failure}
 import play.api.Logger
 
 class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, system: ActorSystem) {
@@ -19,7 +24,13 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
           id match {
             case Some(id) => {
               val actor = system.actorOf(Props[ImageUploadActor])
-              actor ! ImageUploadActor.Upload(id.toInt, new AyaneruDAOImpl)
+              val timeout = Timeout(30 seconds)
+              val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt, new AyaneruDAOImpl))(timeout).mapTo[String]
+              Await.ready(f, Duration.Inf)
+              f.value.get match {
+                case Success(r) => Logger.info(s"Success to download: $r")
+                case Failure(r) => Logger.error(s"Failed to download: $r")
+              }
             }
             case None => {}
           }
@@ -31,7 +42,7 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
 
   def search(): GoogleSearchResponse = {
     val result = request.request().apply()
-    Logger.debug(result)
+    //Logger.debug(result)
     result.parseJson.convertTo[GoogleSearchResponse]
   }
 

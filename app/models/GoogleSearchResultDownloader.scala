@@ -11,11 +11,13 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 import play.api.Logger
 
+
 class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, system: ActorSystem) {
-  def download() = {
+  def download():List[Future[Boolean]] = {
     val items = search().items
     items match {
       case Some(List(_*)) => {
@@ -25,18 +27,24 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
             case Some(id) => {
               val actor = system.actorOf(Props[ImageUploadActor])
               val timeout = Timeout(30 seconds)
-              val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt, new AyaneruDAOImpl))(timeout).mapTo[String]
+              val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
               Await.ready(f, Duration.Inf)
               f.value.get match {
-                case Success(r) => Logger.info(s"Success to download: $r")
-                case Failure(r) => Logger.error(s"Failed to download: $r")
+                case Success(r) => {
+                  Logger.info(s"Success to download: $r")
+                  Future { true }
+                }
+                case Failure(r) => {
+                  Logger.error(s"Failed to download: $r")
+                  Future { false }
+                }
               }
             }
-            case None => {}
+            case None => Future { false }
           }
         }
       }
-      case None => ()
+      case None => List.empty[Future[Boolean]]
     }
   }
 

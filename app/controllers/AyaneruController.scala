@@ -31,7 +31,7 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, system: ActorSy
     id match {
       case Some(id) => {
         val actor = system.actorOf(Props[ImageUploadActor])
-        actor ! ImageUploadActor.Upload(id.toInt, ayaneruDao)
+        actor ! ImageUploadActor.Upload(id.toInt)
       }
       case None => {
       }

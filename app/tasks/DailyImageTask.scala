@@ -3,6 +3,11 @@ package tasks
 import play.api._
 import models.{ GoogleSearchResultDownloader, DailySearchRequest }
 import akka.actor._
+import actors.ImageUploadActor
+import dao.AyaneruDAO
+import scala.concurrent.{Future, Await}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 // How to run this task:
 // in development:
@@ -22,7 +27,14 @@ object DailyImageTask extends App with Task {
     val request = new DailySearchRequest(name, 10)
     val injector = app.injector
     val actorSystem = injector.instanceOf[ActorSystem]
-    val downloader = new GoogleSearchResultDownloader(request, actorSystem)
-    downloader.download()
+    val dao = injector.instanceOf[AyaneruDAO]
+    val actor = actorSystem.actorOf(Props(classOf[ImageUploadActor], dao), "imageUploader")
+    val downloader = new GoogleSearchResultDownloader(request, actor, dao)
+    val result: List[Future[Boolean]] = downloader.download()
+    val f: Future[List[Boolean]] = Future.sequence(result)
+    f.onSuccess {
+      case r: List[Boolean] => r.map {println(_)}
+    }
+    Await.ready(f, Duration.Inf)
   }
 }

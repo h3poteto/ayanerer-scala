@@ -1,6 +1,6 @@
 package controllers
 
-import javax.inject._
+import javax.inject.{Inject, Named, Singleton}
 import play.api._
 import play.api.mvc._
 import play.api.data._
@@ -13,7 +13,7 @@ import actors.ImageUploadActor
 import akka.actor._
 
 @Singleton
-class AyaneruController @Inject() (val messagesApi: MessagesApi, system: ActorSystem, ayaneruDao: AyaneruDAO) extends Controller with I18nSupport {
+class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUploadActor") imageUploadActor: ActorRef, ayaneruDao: AyaneruDAO) extends Controller with I18nSupport {
   val registrationForm = Form[Ayaneru](
     mapping(
       "id"    -> ignored[Option[Int]](None),
@@ -30,8 +30,7 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, system: ActorSy
     val id = ayaneruDao.create(ayaneru)
     id match {
       case Some(id) => {
-        val actor = system.actorOf(Props[ImageUploadActor])
-        actor ! ImageUploadActor.Upload(id.toInt)
+        imageUploadActor ! ImageUploadActor.Upload(id.toInt)
       }
       case None => {
       }

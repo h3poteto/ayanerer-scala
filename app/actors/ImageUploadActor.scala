@@ -9,6 +9,9 @@ import spray.json._
 import javax.inject.Inject
 import models.AyaneruJsonProtocol._
 import models.{Ayaneru, ImageUploader}
+import scala.concurrent.{Future, Await}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 object ImageUploadActor {
   case class Upload(id: Int)
@@ -29,6 +32,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
   def receiveCommand: Receive = {
     case u: Upload => persist(u) { x =>
       execute(u)
+      // TODO: persistで処理が完了したら削除しとかないとだめ
       sender ! "uploaded"
     }
   }
@@ -41,7 +45,12 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
         val aya = ayaneru.get
         val uploader = new ImageUploader(aya.image)
         // TODO: キーをDBに保存しときたい
-        println(uploader.upload())
+        val result: Future[Option[String]] = for {
+          (name, path) <- uploader.download()
+          up <- uploader.upload(name, path)
+        } yield up
+        result.onSuccess { case url: Option[String] => println(url)}
+        Await.result(result, Duration.Inf)
         true
       }
       case None => false

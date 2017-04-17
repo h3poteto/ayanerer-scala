@@ -2,8 +2,8 @@ package models
 
 import spray.json._
 import dispatch._
-import javax.inject.Inject
-import dao.AyaneruDAOImpl
+import javax.inject.{Inject, Named}
+import dao.AyaneruDAO
 import models.GoogleSearchResponseJsonProtocol._
 import actors.ImageUploadActor
 import akka.actor._
@@ -16,31 +16,32 @@ import scala.util.{Success, Failure}
 import play.api.Logger
 
 
-class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, system: ActorSystem) {
+class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, @Named("imageUploader") actor: ActorRef, val dao: AyaneruDAO) {
   def download():List[Future[Boolean]] = {
     val items = search().items
     items match {
       case Some(List(_*)) => {
         items.get.map { item =>
-          val id = saveImage(item)
-          id match {
-            case Some(id) => {
-              val actor = system.actorOf(Props[ImageUploadActor])
-              val timeout = Timeout(30 seconds)
-              val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
-              Await.ready(f, Duration.Inf)
-              f.value.get match {
-                case Success(r) => {
-                  Logger.info(s"Success to download: $r")
-                  Future { true }
-                }
-                case Failure(r) => {
-                  Logger.error(s"Failed to download: $r")
-                  Future { false }
+          Future {
+            val id = saveImage(item)
+            id match {
+              case Some(id) => {
+                val timeout = Timeout(30 seconds)
+                val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
+                Await.ready(f, Duration.Inf)
+                f.value.get match {
+                  case Success(r) => {
+                    Logger.info(s"Success to download: $r")
+                    true
+                  }
+                  case Failure(r) => {
+                    Logger.error(s"Failed to download: $r")
+                    false
+                  }
                 }
               }
+              case None => false
             }
-            case None => Future { false }
           }
         }
       }
@@ -50,13 +51,12 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, s
 
   def search(): GoogleSearchResponse = {
     val result = request.request().apply()
-    //Logger.debug(result)
+    Logger.debug(result)
     result.parseJson.convertTo[GoogleSearchResponse]
   }
 
   def saveImage(item: GoogleSearchItem): Option[Long] = {
     val ayaneru = new Ayaneru(None, item.link)
-    val dao = new AyaneruDAOImpl
     dao.create(ayaneru)
   }
 }

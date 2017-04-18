@@ -14,6 +14,7 @@ import models.AyaneruJsonProtocol._
 class AyaneruController @Inject() (ayaneruDao: AyaneruDAO) extends Controller {
   def index = Action {
     val ayanerus = ayaneruDao.all()
+    println(ayanerus)
     Ok(ayanerus.toJson.prettyPrint)
   }
 }

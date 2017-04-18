@@ -26,7 +26,8 @@ libraryDependencies ++= Seq(
   "com.adrianhurt" %% "play-bootstrap" % "1.1.1-P25-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars")),
   "com.typesafe.akka" %% "akka-persistence" % "2.4.17",
   "org.iq80.leveldb"  % "leveldb"          % "0.7",
-  "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
+  "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8",
+  "com.github.seratch" %% "awscala" % "0.6.+"
 )
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"

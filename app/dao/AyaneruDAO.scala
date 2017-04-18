@@ -10,6 +10,7 @@ trait AyaneruDAO {
   def create(ayaneru: Ayaneru): Option[Long]
   def findById(id: Int): Option[Ayaneru]
   def all(): Seq[Ayaneru]
+  def update(ayaneru: Ayaneru): Unit
 }
 
 class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
@@ -18,15 +19,17 @@ class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
   private[this] lazy val a = defaultAlias
 
   override def extract(rs: WrappedResultSet, rn: ResultName[Ayaneru]): Ayaneru = Ayaneru(
-    id = Some(rs.int(rn.id)),
-    image = rs.string(rn.image)
+    id = Option(rs.int(rn.id)),
+    originalURL = rs.string(rn.originalURL),
+    imageURL = Option(rs.string(rn.imageURL))
   )
 
   def create(ayaneru: Ayaneru): Option[Long] = {
     try {
       Some(
         createWithNamedValues(
-          column.image -> ayaneru.image
+          column.originalURL -> ayaneru.originalURL,
+          column.imageURL -> ayaneru.imageURL
         )
       )
     } catch {
@@ -41,4 +44,10 @@ class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
   def findById(id: Int): Option[Ayaneru] = where(sqls.eq(a.id, id)).apply().headOption
 
   def all(): Seq[Ayaneru] = findAll()
+
+  def update(ayaneru: Ayaneru): Unit = {
+    for (id <- ayaneru.id) yield {
+      updateById(id.toLong).withAttributes('original_url -> ayaneru.originalURL, 'image_url -> ayaneru.imageURL)
+    }
+  }
 }

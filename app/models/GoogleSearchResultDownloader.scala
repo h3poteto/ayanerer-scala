@@ -51,7 +51,7 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, @
   }
 
   def saveImage(item: GoogleSearchItem): Option[Long] = {
-    val ayaneru = new Ayaneru(None, item.link)
+    val ayaneru = new Ayaneru(None, None, item.link)
     dao.create(ayaneru)
   }
 }

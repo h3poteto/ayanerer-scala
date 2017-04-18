@@ -7,7 +7,7 @@
     <div class="form-wrapper">
       <h2>新規登録</h2>
       @b3.form(action = routes.AyaneruController.create) {
-        @b3.text(registrationForm("image"), '_label -> "Image URL")
+        @b3.text(registrationForm("originalURL"), '_label -> "Image URL")
         @b3.submit('class -> "btn btn-primary"){ 登録 }
       }
     </div>

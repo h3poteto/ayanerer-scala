@@ -33,7 +33,7 @@ object DailyImageTask extends App with Task {
     val f: Future[Option[List[Boolean]]] = downloader.download()
     Await.ready(f, Duration.Inf)
     for (res <- f.value) res match {
-      case Success(r) => for(result <- r) { result.map { println(_) }}
+      case Success(r) => for (result <- r) { result.map { println(_) }}
       case Failure(r) => None
     }
   }

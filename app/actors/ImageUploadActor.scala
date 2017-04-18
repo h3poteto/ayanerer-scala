@@ -11,6 +11,7 @@ import models.AyaneruJsonProtocol._
 import models.{Ayaneru, ImageUploader}
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
 import scala.concurrent.duration._
 
 object ImageUploadActor {
@@ -32,7 +33,6 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
   def receiveCommand: Receive = {
     case u: Upload => persist(u) { x =>
       execute(u)
-      // TODO: persistで処理が完了したら削除しとかないとだめ
       sender ! "uploaded"
     }
   }
@@ -41,16 +41,21 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
     val ayaneru = dao.findById(upload.id)
     Logger.info(ayaneru.toJson.prettyPrint)
     ayaneru match {
-      case Some(Ayaneru(_,_)) => {
-        val aya = ayaneru.get
-        val uploader = new ImageUploader(aya.image)
-        // TODO: キーをDBに保存しときたい
-        val result: Future[Option[String]] = for {
+      case Some(aya) => {
+        val uploader = new ImageUploader(aya.originalURL)
+        val f: Future[Option[String]] = for {
           (name, path) <- uploader.download()
           up <- uploader.upload(name, path)
         } yield up
-        result.onSuccess { case url: Option[String] => println(url)}
-        Await.result(result, Duration.Inf)
+        Await.result(f, 10 seconds)
+        for (res <- f.value) res match {
+          case Success(r) => {
+            r.map {Logger.info(_)}
+            var ayane = aya.copy(imageURL = r)
+            dao.update(ayane)
+          }
+          case Failure(r) => false
+        }
         true
       }
       case None => false

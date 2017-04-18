@@ -17,7 +17,8 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUp
   val registrationForm = Form[Ayaneru](
     mapping(
       "id"    -> ignored[Option[Int]](None),
-      "image" -> text
+      "imageURL" -> ignored[Option[String]](None),
+      "originalURL" -> text
     )(Ayaneru.apply)(Ayaneru.unapply)
   )
 

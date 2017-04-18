@@ -4,8 +4,8 @@ import play.api._
 import models.{ GoogleSearchResultDownloader, SeedSearchRequest }
 import akka.actor._
 import scala.concurrent.{Future, Await}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.util.{Success, Failure}
 import actors.ImageUploadActor
 import dao.AyaneruDAO
 
@@ -25,12 +25,12 @@ object SeedImageTask extends App with Task {
       val dao = injector.instanceOf[AyaneruDAO]
       val actor = actorSystem.actorOf(Props(classOf[ImageUploadActor], dao), "imageUploader")
       val downloader = new GoogleSearchResultDownloader(request, actor, dao)
-      val result: List[Future[Boolean]] = downloader.download()
-      val f: Future[List[Boolean]] = Future.sequence(result)
-      f.onSuccess {
-        case r: List[Boolean] => r.map {println(_)}
+      val result: Future[Option[List[Boolean]]] = downloader.download()
+      Await.ready(result, Duration.Inf)
+      for (res <- result.value) res match {
+        case Success(r) => for(result <- r) { result.map { println(_) }}
+        case Failure(r) => r
       }
-      Await.ready(f, Duration.Inf)
     }
   }
 }

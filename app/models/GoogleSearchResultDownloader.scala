@@ -17,35 +17,30 @@ import play.api.Logger
 
 
 class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, @Named("imageUploader") actor: ActorRef, val dao: AyaneruDAO) {
-  def download():List[Future[Boolean]] = {
+  def download():Future[Option[List[Boolean]]] = {
     val items = search().items
-    items match {
-      case Some(List(_*)) => {
-        items.get.map { item =>
-          Future {
-            val id = saveImage(item)
-            id match {
-              case Some(id) => {
-                val timeout = Timeout(30 seconds)
-                val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
-                Await.ready(f, Duration.Inf)
-                f.value.get match {
-                  case Success(r) => {
-                    Logger.info(s"Success to download: $r")
-                    true
-                  }
-                  case Failure(r) => {
-                    Logger.error(s"Failed to download: $r")
-                    false
-                  }
-                }
+    Future {
+      for (list <- items) yield list.map { item =>
+        val id = saveImage(item)
+        id match {
+          case Some(id) => {
+            val timeout = Timeout(30 seconds)
+            val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
+            Await.ready(f, Duration.Inf)
+            (for (res <- f.value) yield res match {
+              case Success(r) => {
+                Logger.info(s"Success to download: $r")
+                true
               }
-              case None => false
-            }
+              case Failure(r) => {
+                Logger.error(s"Failed to download: $r")
+                false
+              }
+            }).getOrElse(false)
           }
+          case None => false
         }
       }
-      case None => List.empty[Future[Boolean]]
     }
   }
 

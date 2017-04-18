@@ -6,7 +6,7 @@ import akka.actor._
 import actors.ImageUploadActor
 import dao.AyaneruDAO
 import scala.concurrent.{Future, Await}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
 import scala.concurrent.duration._
 
 // How to run this task:
@@ -30,11 +30,11 @@ object DailyImageTask extends App with Task {
     val dao = injector.instanceOf[AyaneruDAO]
     val actor = actorSystem.actorOf(Props(classOf[ImageUploadActor], dao), "imageUploader")
     val downloader = new GoogleSearchResultDownloader(request, actor, dao)
-    val result: List[Future[Boolean]] = downloader.download()
-    val f: Future[List[Boolean]] = Future.sequence(result)
-    f.onSuccess {
-      case r: List[Boolean] => r.map {println(_)}
-    }
+    val f: Future[Option[List[Boolean]]] = downloader.download()
     Await.ready(f, Duration.Inf)
+    for (res <- f.value) res match {
+      case Success(r) => for(result <- r) { result.map { println(_) }}
+      case Failure(r) => None
+    }
   }
 }

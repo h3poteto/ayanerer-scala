@@ -33,8 +33,8 @@ class ImageUploader(val url: String) {
           val s3 = S3().at(Region.Tokyo)
           val bucket: Option[Bucket] = s3.bucket("akira-play")
           bucket match {
-            case Some(Bucket(_)) => {
-              Some(bucket.get.put(fileName, new java.io.File(filePath))(s3).key)
+            case Some(b) => {
+              Some(b.put(fileName, new java.io.File(filePath))(s3).key)
             }
             case _ => None
           }

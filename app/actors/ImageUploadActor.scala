@@ -51,8 +51,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
         for (res <- f.value) res match {
           case Success(r) => {
             r.map {Logger.info(_)}
-            var ayane = aya.copy(imageURL = r)
-            dao.update(ayane)
+            dao.update(aya.copy(imageURL = r))
           }
           case Failure(r) => false
         }

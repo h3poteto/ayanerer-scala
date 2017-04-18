@@ -35,7 +35,7 @@ class AyaneruControllerSpec extends PlaySpec with OneAppPerTest  with ScalaFutur
 
     "Some object" should {
       val ayaneruDaoMock = mock[AyaneruDAO]
-      when(ayaneruDaoMock.all()).thenReturn(Seq(new Ayaneru(Some(1), "sample")))
+      when(ayaneruDaoMock.all()).thenReturn(Seq(new Ayaneru(Some(1), None, "sample")))
 
       val mockApp = new GuiceApplicationBuilder().
         overrides(bind[AyaneruDAO].toInstance(ayaneruDaoMock)).
@@ -46,7 +46,7 @@ class AyaneruControllerSpec extends PlaySpec with OneAppPerTest  with ScalaFutur
 
         contentAsString(index) mustBe """[{
   "id": 1,
-  "image": "sample"
+  "originalURL": "sample"
 }]"""
       }
     }

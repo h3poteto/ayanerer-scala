@@ -13,7 +13,7 @@ class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
 
   "insert" should {
     "success" in {
-      val ayaneru = new Ayaneru(None, "sample")
+      val ayaneru = new Ayaneru(None, None, "sample")
       val result = ayaneruDao.create(ayaneru)
       result mustBe(_: Long)
     }
@@ -21,9 +21,9 @@ class AyaneruDAOSpec extends DatabaseSpec with ScalaFutures {
 
   "all" should {
     "success" in {
-      val ayaneru = new Ayaneru(None, "sample")
+      val ayaneru = new Ayaneru(None, None, "sample")
       ayaneruDao.create(ayaneru)
-      ayaneruDao.all()(0).image mustBe ayaneru.image
+      ayaneruDao.all()(0).originalURL mustBe ayaneru.originalURL
     }
   }
 }

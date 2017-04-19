@@ -26,6 +26,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
     case u: Upload => {
       Logger.debug(s"recoverd upload: ${u.id}")
       execute(u)
+      saveSnapshot(1)
     }
     case SnapshotOffer(_, snapshot: Int) => ()
   }
@@ -33,8 +34,10 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
   def receiveCommand: Receive = {
     case u: Upload => persist(u) { x =>
       execute(u)
+      saveSnapshot(1)
       sender ! "uploaded"
     }
+    case "snapshot" => saveSnapshot(1)
   }
 
   def execute(upload: Upload):Boolean = {

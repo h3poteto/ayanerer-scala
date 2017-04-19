@@ -11,6 +11,7 @@ import dao.AyaneruDAO
 import models.Ayaneru
 import actors.ImageUploadActor
 import akka.actor._
+import java.time.ZonedDateTime
 
 @Singleton
 class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUploadActor") imageUploadActor: ActorRef, ayaneruDao: AyaneruDAO) extends Controller with I18nSupport {
@@ -18,7 +19,9 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUp
     mapping(
       "id"    -> ignored[Option[Int]](None),
       "imageURL" -> ignored[Option[String]](None),
-      "originalURL" -> text
+      "originalURL" -> text,
+      "createdAt" -> ignored[Option[ZonedDateTime]](None),
+      "updatedAt" -> ignored[Option[ZonedDateTime]](None)
     )(Ayaneru.apply)(Ayaneru.unapply)
   )
 

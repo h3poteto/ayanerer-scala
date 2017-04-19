@@ -1,10 +1,12 @@
 package dao
 
-import scalikejdbc._
+import scalikejdbc._, jsr310._
 import skinny.orm._
+import skinny.orm.feature.TimestampsFeature
 import models.Ayaneru
 import java.sql.SQLException
 import play.api.Logger
+import java.time.ZonedDateTime
 
 trait AyaneruDAO {
   def create(ayaneru: Ayaneru): Option[Long]
@@ -13,7 +15,7 @@ trait AyaneruDAO {
   def update(ayaneru: Ayaneru): Unit
 }
 
-class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
+class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO with TimestampsFeature[Ayaneru] {
   override lazy val defaultAlias = createAlias("a")
   override lazy val tableName = "ayanerus"
   private[this] lazy val a = defaultAlias
@@ -21,7 +23,9 @@ class AyaneruDAOImpl extends SkinnyCRUDMapper[Ayaneru] with AyaneruDAO {
   override def extract(rs: WrappedResultSet, rn: ResultName[Ayaneru]): Ayaneru = Ayaneru(
     id = Option(rs.int(rn.id)),
     originalURL = rs.string(rn.originalURL),
-    imageURL = Option(rs.string(rn.imageURL))
+    imageURL = Option(rs.string(rn.imageURL)),
+    createdAt = Option(rs.get[ZonedDateTime](rn.createdAt)),
+    updatedAt = Option(rs.get[ZonedDateTime](rn.updatedAt))
   )
 
   def create(ayaneru: Ayaneru): Option[Long] = {

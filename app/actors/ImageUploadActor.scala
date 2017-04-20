@@ -5,7 +5,6 @@ import play.api.Play
 import akka.actor._
 import akka.persistence._
 import dao.AyaneruDAO
-import spray.json._
 import javax.inject.Inject
 import models.AyaneruJsonProtocol._
 import models.{Ayaneru, ImageUploader}
@@ -13,9 +12,21 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 import scala.concurrent.duration._
+import stamina.Persistable
+import stamina.json.persister
+import spray.json._
+
+
+object ImageUploaderActorJsonProtocol extends DefaultJsonProtocol {
+  import ImageUploadActor._
+  implicit val format = jsonFormat1(Upload.apply)
+}
+
 
 object ImageUploadActor {
-  case class Upload(id: Int)
+  import ImageUploaderActorJsonProtocol._
+  case class Upload(id: Int) extends Persistable
+  val v1ImageUploaderPersister = persister[Upload]("image-uploader")
 }
 
 class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with AtLeastOnceDelivery {

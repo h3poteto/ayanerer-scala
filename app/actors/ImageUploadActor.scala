@@ -5,6 +5,7 @@ import play.api.Play
 import akka.actor._
 import akka.persistence._
 import dao.AyaneruDAO
+import spray.json._
 import javax.inject.Inject
 import models.AyaneruJsonProtocol._
 import models.{Ayaneru, ImageUploader}
@@ -12,29 +13,13 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 import scala.concurrent.duration._
-import stamina.Persistable
-import stamina.json.persister
-import spray.json._
-
-
-object ImageUploaderActorJsonProtocol extends DefaultJsonProtocol {
-  import ImageUploadActor._
-  implicit val format = jsonFormat1(Upload.apply)
-}
-
-
-object ImageUploadActor {
-  import ImageUploaderActorJsonProtocol._
-  case class Upload(id: Int) extends Persistable
-  val v1ImageUploaderPersister = persister[Upload]("image-uploader")
-}
+import actors.events.ImageUploadEvent
 
 class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with AtLeastOnceDelivery {
-  import ImageUploadActor._
   override def persistenceId = "image-upload-actor"
 
   def receiveRecover: Receive = {
-    case u: Upload => {
+    case u: ImageUploadEvent.Upload => {
       Logger.debug(s"recoverd upload: ${u.id}")
       execute(u)
       saveSnapshot(1)
@@ -43,7 +28,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
   }
 
   def receiveCommand: Receive = {
-    case u: Upload => persist(u) { x =>
+    case u: ImageUploadEvent.Upload => persist(u) { x =>
       execute(u)
       saveSnapshot(1)
       sender ! "uploaded"
@@ -51,7 +36,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
     case "snapshot" => saveSnapshot(1)
   }
 
-  def execute(upload: Upload):Boolean = {
+  def execute(upload: ImageUploadEvent.Upload):Boolean = {
     val ayaneru = dao.findById(upload.id)
     Logger.info(ayaneru.toJson.prettyPrint)
     ayaneru match {

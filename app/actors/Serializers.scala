@@ -1,7 +1,7 @@
 package serializers
 
 import stamina.{StaminaAkkaSerializer}
-import actors.ImageUploadActor
+import actors.events.ImageUploadEvent
 
-class ImageUploaderSerializer extends StaminaAkkaSerializer(ImageUploadActor.v1ImageUploaderPersister)
+class ImageUploaderSerializer extends StaminaAkkaSerializer(ImageUploadEvent.v1ImageUploaderPersister)
 

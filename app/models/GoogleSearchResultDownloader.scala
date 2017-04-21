@@ -5,7 +5,7 @@ import dispatch._
 import javax.inject.{Inject, Named}
 import dao.AyaneruDAO
 import models.GoogleSearchResponseJsonProtocol._
-import actors.ImageUploadActor
+import actors.events.ImageUploadEvent
 import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
@@ -25,7 +25,7 @@ class GoogleSearchResultDownloader @Inject()(val request: GoogleSearchRequest, @
         id match {
           case Some(id) => {
             val timeout = Timeout(30 seconds)
-            val f: Future[String] = (actor ask ImageUploadActor.Upload(id.toInt))(timeout).mapTo[String]
+            val f: Future[String] = (actor ask ImageUploadEvent.Upload(id.toInt))(timeout).mapTo[String]
             Await.ready(f, Duration.Inf)
             (for (res <- f.value) yield res match {
               case Success(r) => {

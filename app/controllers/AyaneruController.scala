@@ -9,7 +9,7 @@ import play.api.libs.json._
 import play.api.i18n.{MessagesApi, Messages, I18nSupport}
 import dao.AyaneruDAO
 import models.Ayaneru
-import actors.ImageUploadActor
+import actors.events.ImageUploadEvent
 import akka.actor._
 import java.time.ZonedDateTime
 
@@ -34,7 +34,7 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUp
     val id = ayaneruDao.create(ayaneru)
     id match {
       case Some(id) => {
-        imageUploadActor ! ImageUploadActor.Upload(id.toInt)
+        imageUploadActor ! ImageUploadEvent.Upload(id.toInt)
       }
       case None => {
       }

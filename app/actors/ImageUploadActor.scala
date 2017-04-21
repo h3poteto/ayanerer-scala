@@ -13,17 +13,13 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 import scala.concurrent.duration._
-
-object ImageUploadActor {
-  case class Upload(id: Int)
-}
+import actors.events.ImageUploadEvent
 
 class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with AtLeastOnceDelivery {
-  import ImageUploadActor._
   override def persistenceId = "image-upload-actor"
 
   def receiveRecover: Receive = {
-    case u: Upload => {
+    case u: ImageUploadEvent.Upload => {
       Logger.debug(s"recoverd upload: ${u.id}")
       execute(u)
       saveSnapshot(1)
@@ -32,7 +28,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
   }
 
   def receiveCommand: Receive = {
-    case u: Upload => persist(u) { x =>
+    case u: ImageUploadEvent.Upload => persist(u) { x =>
       execute(u)
       saveSnapshot(1)
       sender ! "uploaded"
@@ -40,7 +36,7 @@ class ImageUploadActor @Inject() (dao: AyaneruDAO) extends PersistentActor with 
     case "snapshot" => saveSnapshot(1)
   }
 
-  def execute(upload: Upload):Boolean = {
+  def execute(upload: ImageUploadEvent.Upload):Boolean = {
     val ayaneru = dao.findById(upload.id)
     Logger.info(ayaneru.toJson.prettyPrint)
     ayaneru match {

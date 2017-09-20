@@ -16,7 +16,7 @@ trait Task extends Runnable {
 
   def task(app: Application)
 
-  def environment(): Mode.Mode = {
+  def environment(): Mode = {
     System.getProperty("play.mode") match {
       case "Prod" => Mode.Prod
       case _ => Mode.Dev

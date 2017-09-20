@@ -14,7 +14,7 @@ import akka.actor._
 import java.time.ZonedDateTime
 
 @Singleton
-class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUploadActor") imageUploadActor: ActorRef, ayaneruDao: AyaneruDAO) extends Controller with I18nSupport {
+class AyaneruController @Inject() (components: ControllerComponents, @Named("imageUploadActor") imageUploadActor: ActorRef, ayaneruDao: AyaneruDAO) extends AbstractController(components) with I18nSupport {
   val registrationForm = Form[Ayaneru](
     mapping(
       "id"    -> ignored[Option[Int]](None),
@@ -25,7 +25,7 @@ class AyaneruController @Inject() (val messagesApi: MessagesApi, @Named("imageUp
     )(Ayaneru.apply)(Ayaneru.unapply)
   )
 
-  def registration = Action {
+  def registration = Action { implicit requiest =>
     Ok(views.html.ayaneru.registration(registrationForm))
   }
 

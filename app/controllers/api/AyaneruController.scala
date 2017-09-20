@@ -11,7 +11,7 @@ import models.Ayaneru
 import models.AyaneruJsonProtocol._
 
 @Singleton
-class AyaneruController @Inject() (ayaneruDao: AyaneruDAO) extends Controller {
+class AyaneruController @Inject() (components: ControllerComponents,ayaneruDao: AyaneruDAO) extends AbstractController(components) {
   def index = Action {
     val ayanerus = ayaneruDao.all()
     println(ayanerus)

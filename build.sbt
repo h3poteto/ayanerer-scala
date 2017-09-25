@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "font-awesome" % "4.7.0",
   "org.webjars" % "bootstrap-datepicker" % "1.4.0" exclude("org.webjars", "bootstrap"),
   "com.typesafe.akka" %% "akka-persistence" % "2.5.+",
-  "org.iq80.leveldb"  % "leveldb"          % "0.9",
+  "org.iq80.leveldb"  % "leveldb"          % "0.7",
   "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8",
   "com.github.seratch" %% "awscala" % "0.6.+",
   "com.scalapenos" %% "stamina-json" % "0.1.+"
